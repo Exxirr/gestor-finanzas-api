@@ -7,7 +7,7 @@ import com.gestor_finanzas.dto.TransactionResponse;
 public interface TransactionService {
 
 
-    PagedResponse<TransactionResponse> findAllTransactions(int page, int size);
+    PagedResponse<TransactionResponse> findAllTransactions(int page, int size, String sortBy, String sortDir);
 
 
     TransactionResponse getTransactionById(Long id);

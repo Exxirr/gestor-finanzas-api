@@ -13,6 +13,7 @@ import com.gestor_finanzas.service.TransactionService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -31,9 +32,13 @@ public class TransactionServiceImpl implements TransactionService {
 
 
     @Override
-    public PagedResponse<TransactionResponse> findAllTransactions(int page, int size) {
+    public PagedResponse<TransactionResponse> findAllTransactions(int page, int size, String sortBy, String sortDir) {
 
-        Pageable pageable = PageRequest.of(page, size);
+        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name())
+                ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
 
         Page<Transaction> transactionsPage = transactionRepository.findAll(pageable);
 

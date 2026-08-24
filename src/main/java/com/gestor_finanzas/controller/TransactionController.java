@@ -25,10 +25,12 @@ public class TransactionController {
     @GetMapping
     public ResponseEntity<PagedResponse<TransactionResponse>> getAllTransactions(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "date") String sortBy,
+            @RequestParam(defaultValue = "desc") String sortDir
     ) {
 
-        PagedResponse<TransactionResponse> response = transactionService.findAllTransactions(page, size);
+        PagedResponse<TransactionResponse> response = transactionService.findAllTransactions(page, size, sortBy, sortDir);
 
         return ResponseEntity.ok(response);
     }
