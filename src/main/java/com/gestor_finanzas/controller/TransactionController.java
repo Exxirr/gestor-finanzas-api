@@ -1,6 +1,7 @@
 package com.gestor_finanzas.controller;
 
 import com.gestor_finanzas.dto.PagedResponse;
+import com.gestor_finanzas.dto.TransactionFilter;
 import com.gestor_finanzas.dto.TransactionRequest;
 import com.gestor_finanzas.dto.TransactionResponse;
 import com.gestor_finanzas.service.TransactionService;
@@ -27,10 +28,11 @@ public class TransactionController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "date") String sortBy,
-            @RequestParam(defaultValue = "desc") String sortDir
+            @RequestParam(defaultValue = "desc") String sortDir,
+            TransactionFilter filter
     ) {
 
-        PagedResponse<TransactionResponse> response = transactionService.findAllTransactions(page, size, sortBy, sortDir);
+        PagedResponse<TransactionResponse> response = transactionService.findAllTransactions(page, size, sortBy, sortDir, filter);
 
         return ResponseEntity.ok(response);
     }

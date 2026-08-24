@@ -1,19 +1,18 @@
 package com.gestor_finanzas.service.impl;
 
-import com.gestor_finanzas.dto.CategoryResponse;
-import com.gestor_finanzas.dto.PagedResponse;
-import com.gestor_finanzas.dto.TransactionRequest;
-import com.gestor_finanzas.dto.TransactionResponse;
+import com.gestor_finanzas.dto.*;
 import com.gestor_finanzas.exception.ResourceNotFoundException;
 import com.gestor_finanzas.model.Category;
 import com.gestor_finanzas.model.Transaction;
 import com.gestor_finanzas.repository.CategoryRepository;
 import com.gestor_finanzas.repository.TransactionRepository;
 import com.gestor_finanzas.service.TransactionService;
+import com.gestor_finanzas.specification.TransactionSpecification;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -32,7 +31,7 @@ public class TransactionServiceImpl implements TransactionService {
 
 
     @Override
-    public PagedResponse<TransactionResponse> findAllTransactions(int page, int size, String sortBy, String sortDir) {
+    public PagedResponse<TransactionResponse> findAllTransactions(int page, int size, String sortBy, String sortDir, TransactionFilter filter) {
 
         Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name())
                 ? Sort.by(sortBy).ascending()
@@ -40,7 +39,9 @@ public class TransactionServiceImpl implements TransactionService {
 
         Pageable pageable = PageRequest.of(page, size, sort);
 
-        Page<Transaction> transactionsPage = transactionRepository.findAll(pageable);
+        Specification<Transaction> spec = TransactionSpecification.getSpecifications(filter);
+
+        Page<Transaction> transactionsPage = transactionRepository.findAll(spec, pageable);
 
         List<TransactionResponse> content = transactionsPage
                 .getContent()
