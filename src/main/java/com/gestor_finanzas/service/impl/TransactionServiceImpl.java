@@ -1,6 +1,7 @@
 package com.gestor_finanzas.service.impl;
 
 import com.gestor_finanzas.dto.CategoryResponse;
+import com.gestor_finanzas.dto.PagedResponse;
 import com.gestor_finanzas.dto.TransactionRequest;
 import com.gestor_finanzas.dto.TransactionResponse;
 import com.gestor_finanzas.exception.ResourceNotFoundException;
@@ -9,6 +10,9 @@ import com.gestor_finanzas.model.Transaction;
 import com.gestor_finanzas.repository.CategoryRepository;
 import com.gestor_finanzas.repository.TransactionRepository;
 import com.gestor_finanzas.service.TransactionService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,12 +31,28 @@ public class TransactionServiceImpl implements TransactionService {
 
 
     @Override
-    public List<TransactionResponse> findAllTransactions() {
-        return transactionRepository
-                .findAll()
+    public PagedResponse<TransactionResponse> findAllTransactions(int page, int size) {
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<Transaction> transactionsPage = transactionRepository.findAll(pageable);
+
+        List<TransactionResponse> content = transactionsPage
+                .getContent()
                 .stream()
                 .map(this::mapToResponse)
                 .toList();
+
+        return PagedResponse
+                .<TransactionResponse>builder()
+                .content(content)
+                .pageNumber(transactionsPage.getNumber())
+                .pageSize(transactionsPage.getSize())
+                .totalElements(transactionsPage.getTotalElements())
+                .totalPages(transactionsPage.getTotalPages())
+                .last(transactionsPage.isLast())
+                .build();
+
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.gestor_finanzas.controller;
 
+import com.gestor_finanzas.dto.PagedResponse;
 import com.gestor_finanzas.dto.TransactionRequest;
 import com.gestor_finanzas.dto.TransactionResponse;
 import com.gestor_finanzas.service.TransactionService;
@@ -9,8 +10,6 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Tag(name = "Transactions", description = "Controller for managing income and expense transactions")
 @RestController
@@ -24,11 +23,14 @@ public class TransactionController {
     }
 
     @GetMapping
-    public ResponseEntity<List<TransactionResponse>> getAllTransactions() {
+    public ResponseEntity<PagedResponse<TransactionResponse>> getAllTransactions(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
 
-        List<TransactionResponse> transactions = transactionService.findAllTransactions();
+        PagedResponse<TransactionResponse> response = transactionService.findAllTransactions(page, size);
 
-        return ResponseEntity.ok(transactions);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{id}")
