@@ -22,6 +22,11 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryResponse createCategory(CategoryRequest categoryRequest) {
 
+        if (!categoryRepository.existsByName(categoryRequest.getName())) {
+
+            throw new IllegalArgumentException("Category with name " + categoryRequest.getName() + " already exists");
+        }
+
         Category category = mapToCategory(categoryRequest);
 
         Category savedCategory = categoryRepository.save(category);
@@ -44,6 +49,33 @@ public class CategoryServiceImpl implements CategoryService {
         Category category = categoryRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Not found with Id : " + id));
 
         return mapToResponse(category);
+    }
+
+    @Override
+    public CategoryResponse updateCategory(Long id, CategoryRequest categoryRequest) {
+
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Not found with Id : " + id));
+
+        if (!category.getName().equalsIgnoreCase(categoryRequest.getName()) &&
+                categoryRepository.existsByName(categoryRequest.getName())) {
+            throw new IllegalArgumentException("Category with name '" + categoryRequest.getName() + "' already exists");
+        }
+
+        category.setName(categoryRequest.getName());
+        category.setDescription(categoryRequest.getDescription());
+
+        Category updatedCategory = categoryRepository.save(category);
+        return mapToResponse(updatedCategory);
+    }
+
+    @Override
+    public void deleteCategory(Long id) {
+
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Not found with Id : " + id));
+
+        categoryRepository.delete(category);
     }
 
     private Category mapToCategory(CategoryRequest categoryRequest) {

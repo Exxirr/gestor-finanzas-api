@@ -50,4 +50,18 @@ public class CategoryController {
         return ResponseEntity.status(HttpStatus.CREATED).body(categoryResponse);
 
     }
+
+    @Operation(summary = "Update an existing category")
+    @PutMapping("/{id}")
+    public ResponseEntity<CategoryResponse> updateCategory(@PathVariable Long id, @Valid @RequestBody CategoryRequest categoryRequest) {
+        CategoryResponse categoryResponse = categoryService.updateCategory(id, categoryRequest);
+        return ResponseEntity.ok(categoryResponse);
+    }
+
+    @Operation(summary = "Delete category by ID")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteCategory(@PathVariable Long id) {
+        categoryService.deleteCategory(id);
+        return ResponseEntity.noContent().build();
+    }
 }
