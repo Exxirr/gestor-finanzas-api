@@ -1,9 +1,6 @@
 package com.gestor_finanzas.controller;
 
-import com.gestor_finanzas.dto.PagedResponse;
-import com.gestor_finanzas.dto.TransactionFilter;
-import com.gestor_finanzas.dto.TransactionRequest;
-import com.gestor_finanzas.dto.TransactionResponse;
+import com.gestor_finanzas.dto.*;
 import com.gestor_finanzas.service.TransactionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -43,6 +40,11 @@ public class TransactionController {
         TransactionResponse transaction = transactionService.getTransactionById(id);
 
         return ResponseEntity.ok(transaction);
+    }
+
+    @GetMapping("/summary")
+    public ResponseEntity<TransactionSummaryResponse> getTransactionSummary() {
+        return ResponseEntity.ok(transactionService.getTransactionSummary());
     }
 
     @Operation(summary = "Create a new transaction", description = "Saves a new transaction into the system with validation")

@@ -4,6 +4,7 @@ import com.gestor_finanzas.dto.*;
 import com.gestor_finanzas.exception.ResourceNotFoundException;
 import com.gestor_finanzas.model.Category;
 import com.gestor_finanzas.model.Transaction;
+import com.gestor_finanzas.model.TransactionType;
 import com.gestor_finanzas.repository.CategoryRepository;
 import com.gestor_finanzas.repository.TransactionRepository;
 import com.gestor_finanzas.service.TransactionService;
@@ -15,6 +16,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -59,6 +61,21 @@ public class TransactionServiceImpl implements TransactionService {
                 .last(transactionsPage.isLast())
                 .build();
 
+    }
+
+    @Override
+    public TransactionSummaryResponse getTransactionSummary() {
+
+
+        BigDecimal totalIncome = transactionRepository.sumAmoutByType(TransactionType.INCOME);
+        BigDecimal totalExpense = transactionRepository.sumAmoutByType(TransactionType.EXPENSE);
+
+        totalIncome = (totalIncome != null) ? totalIncome : BigDecimal.ZERO;
+        totalExpense = (totalExpense != null) ? totalExpense : BigDecimal.ZERO;
+
+        BigDecimal netBalance = totalIncome.subtract(totalExpense);
+
+        return new TransactionSummaryResponse(totalIncome, totalExpense, netBalance);
     }
 
     @Override
